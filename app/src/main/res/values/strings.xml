@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">DairyApp</string>
+
+    <string name="app_name">Dairy App</string>
+
+    <string name="app_moto">بهترین نرم افزار خاطره نویسی</string>
+    <string name="main_page_title">صفحه اصلی</string>
+    <string name="more_title">بیشتر...</string>
+
 </resources>
