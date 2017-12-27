@@ -59,4 +59,8 @@ public class NoteItem {
                 ", id=" + id +
                 '}';
     }
+    
+    public void print(){
+        System.out.println(toString());
+    }
 }
