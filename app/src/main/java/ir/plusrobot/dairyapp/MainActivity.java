@@ -1,8 +1,8 @@
 package ir.plusrobot.dairyapp;
 
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
 
         RecyclerView rvMain = (RecyclerView) findViewById(R.id.rv_main);
+
+        fab.bringToFront();
+
 
         mNoteList = new ArrayList<>();
 
