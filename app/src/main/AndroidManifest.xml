@@ -29,7 +29,10 @@
         </activity>
 
 
-        <activity android:name=".NoteActivity" />
+        <activity android:name=".NoteActivity">
+
+
+        </activity>
 
 
     </application>

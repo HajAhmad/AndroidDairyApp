@@ -1,11 +1,11 @@
 package ir.plusrobot.dairyapp.database;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "dairydb";
     public static final int DATABASE_VERSION = 2;
+    private String TAG = SqlHelper.class.getSimpleName();
 
 
     public SqlHelper(Context context) {
@@ -44,18 +45,26 @@ public class SqlHelper extends SQLiteOpenHelper {
         mDb = getReadableDatabase();
 
         List<NoteItem> noteList = new ArrayList<>();
-        NoteItem note = new NoteItem();
 
         Cursor c = mDb.rawQuery("SELECT * FROM " + SqlContract.TABLE_DAIRY, null);
+
         if (c.moveToFirst()) {
             do {
-                note.setId(c.getInt(c.getColumnIndex(SqlContract.TD_COLUMN_ID)));
-                note.setTitle(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_TITLE)));
-                note.setDate(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_DATE)));
-                note.setFav(Boolean.valueOf(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV))));
-                noteList.add(note);
+
+                noteList.add(new NoteItem(
+                        c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_TITLE)),
+                        c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_DATE)),
+                        Boolean.valueOf(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV))),
+                        c.getInt(c.getColumnIndex(SqlContract.TD_COLUMN_ID))
+                ));
+
             } while (c.moveToNext());
             c.close();
+        }
+
+        for (NoteItem ite :
+                noteList) {
+            Log.i("Sql", "getAllNotes: " + ite.toString());
         }
 
         mDb.close();
@@ -80,6 +89,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(SqlContract.TD_COLUMN_DATE, note.getDate());
 
         long retId = mDb.insert(SqlContract.TABLE_DAIRY, null, values);
+        Log.i("Sql", "insertNote: Note Inserted");
 
         mDb.close();
         return retId;
@@ -124,7 +134,25 @@ public class SqlHelper extends SQLiteOpenHelper {
             c.close();
         }
 
+        mDb.close();
         return note;
+    }
+
+
+    public int updateNote(int id, Note note) {
+        mDb = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(SqlContract.TD_COLUMN_TITLE, note.getTitle());
+        values.put(SqlContract.TD_COLUMN_CONTENT, note.getContent());
+        values.put(SqlContract.TD_COLUMN_DATE, note.getDate());
+
+        int updatedRecordsCount = mDb.update(SqlContract.TABLE_DAIRY, values,
+                SqlContract.TD_COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+
+
+        mDb.close();
+        return updatedRecordsCount;
     }
 
 

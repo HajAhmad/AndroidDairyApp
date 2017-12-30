@@ -5,5 +5,8 @@
     <string name="app_moto">بهترین نرم افزار خاطره نویسی</string>
     <string name="main_page_title">صفحه اصلی</string>
     <string name="more_title">بیشتر...</string>
+    <string name="favorite_title">مورد علاقه</string>
+    <string name="et_title_title">عنوان را وارد نمایید</string>
+    <string name="save_title">ذخیره</string>
 
 </resources>

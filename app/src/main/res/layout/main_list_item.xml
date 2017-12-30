@@ -44,6 +44,8 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/mli_tv_date"
             android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:contentDescription="@string/favorite_title"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_favorite_border_red_700_24dp" />
 

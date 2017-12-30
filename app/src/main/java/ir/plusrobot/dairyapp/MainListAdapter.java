@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainViewHolder>
@@ -23,7 +24,18 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainVi
     private OnItemClickListener mOnItemClickListener;
     private RecyclerView mRecyclerView;
 
+
+    public interface OnItemClickListener {
+
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+
+    }
+
+
     public MainListAdapter(List<NoteItem> mNoteList, Context mContext) {
+        this.mNoteList = new ArrayList<>();
         this.mNoteList = mNoteList;
         this.mContext = mContext;
     }
@@ -81,6 +93,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainVi
     }
 
 
+    //*************On Item Click Methods*******************************************
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         View v = rv.findChildViewUnder(e.getX(), e.getY());
@@ -99,15 +112,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainVi
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
     }
-
-    public interface OnItemClickListener {
-
-        void onClick(View view, int position);
-
-        void onLongClick(View view, int position);
-
-    }
-
+    //***********************************************************************************
 
     class MainViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDate;
