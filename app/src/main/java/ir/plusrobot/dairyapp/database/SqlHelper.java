@@ -41,22 +41,30 @@ public class SqlHelper extends SQLiteOpenHelper {
      *
      * @return A List of Notes. see {@link NoteItem} for more information.
      */
+    volatile NoteItem note = new NoteItem();
+
     public List<NoteItem> getAllNotes() {
         mDb = getReadableDatabase();
 
         List<NoteItem> noteList = new ArrayList<>();
 
         Cursor c = mDb.rawQuery("SELECT * FROM " + SqlContract.TABLE_DAIRY, null);
-
         if (c.moveToFirst()) {
             do {
+                note.setDate(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_DATE)));
+                note.setId(c.getInt(c.getColumnIndex(SqlContract.TD_COLUMN_ID)));
+                note.setDate(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_DATE)));
+                note.setFav(Boolean.valueOf(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV))));
+                note.setTitle(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_TITLE)));
 
-                noteList.add(new NoteItem(
-                        c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_TITLE)),
-                        c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_DATE)),
-                        Boolean.valueOf(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV))),
-                        c.getInt(c.getColumnIndex(SqlContract.TD_COLUMN_ID))
-                ));
+                noteList.add(note
+//                        new NoteItem(
+//                        c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_TITLE)),
+//                        c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_DATE)),
+//                        Boolean.valueOf(c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV))),
+//                        c.getInt(c.getColumnIndex(SqlContract.TD_COLUMN_ID))
+//                )
+                );
 
             } while (c.moveToNext());
             c.close();
