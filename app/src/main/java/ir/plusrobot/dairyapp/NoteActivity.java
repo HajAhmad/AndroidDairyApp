@@ -30,7 +30,7 @@ public class NoteActivity extends AppCompatActivity {
         toolbar.findViewById(R.id.tv_title).setVisibility(View.GONE);
         int noteId = 0;
 
-        if (getIntent().getExtras().isEmpty() == false)// Check if it is not null
+        if (getIntent().getExtras() != null)// Check if it is not null
             noteId = getIntent().getExtras().getInt("NoteId");
 
         final EditText etTitle = (EditText) toolbar.findViewById(R.id.et_title);
