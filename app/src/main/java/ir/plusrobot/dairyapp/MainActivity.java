@@ -8,8 +8,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -19,7 +21,8 @@ import java.util.List;
 
 import ir.plusrobot.dairyapp.database.SqlHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements MainListAdapter.OnLikeClickListener {
 
     private List<NoteItem> mNoteList;
     private MainListAdapter mAdapter;
@@ -52,45 +55,50 @@ public class MainActivity extends AppCompatActivity {
         rvMain.setLayoutManager(layoutManager);
         rvMain.setItemAnimator(new DefaultItemAnimator());
         rvMain.setAdapter(mAdapter);
-        rvMain.addOnItemTouchListener(new MainListAdapter(MainActivity.this, rvMain,
-                new MainListAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new MainListAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                int id = mNoteList.get(position).getId();
+                Intent intent = new Intent(MainActivity.this, NoteActivity.class);
+                intent.putExtra("NoteId", id);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(final View view, final int position) {
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                ad.setTitle("پاک کنم؟");
+                ad.setMessage("مطمئنین می خواین این خاطره رو پاک کنین؟");
+                ad.setPositiveButton("آره", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View view, int position) {
-                        int id = mNoteList.get(position).getId();
-                        Intent intent = new Intent(MainActivity.this, NoteActivity.class);
-                        intent.putExtra("NoteId", id);
-                        startActivity(intent);
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDb = new SqlHelper(MainActivity.this);
+                        mDb.deleteNote(mNoteList.get(position).getId());
+                        mNoteList.remove(position);
+                        Toast.makeText(MainActivity.this, "خاطره پاک شد", Toast.LENGTH_SHORT).show();
+                        mAdapter.notifyItemRemoved(position);
+                        mAdapter.notifyDataSetChanged();
                     }
+                });
 
+                ad.setNegativeButton("بیخیال", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onLongClick(View view, final int position) {
-
-                        AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
-                        ad.setTitle("پاک کنم؟");
-                        ad.setMessage("مطمئنین می خواین این خاطره رو پاک کنین؟");
-                        ad.setPositiveButton("آره", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mDb = new SqlHelper(MainActivity.this);
-                                mDb.deleteNote(mNoteList.get(position).getId());
-                                mNoteList.remove(position);
-                                Toast.makeText(MainActivity.this, "خاطره پاک شد", Toast.LENGTH_SHORT).show();
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        });
-
-                        ad.setNegativeButton("بیخیال", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        ad.show();
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
                     }
+                });
 
-                }));
+                ad.show();
+            }
+        });
+
+        mAdapter.setOnLikeClickListener(new MainListAdapter.OnLikeClickListener() {
+            @Override
+            public void onLikeClick(int position) {
+                SqlHelper db = new SqlHelper(MainActivity.this);
+                db.setLike(mNoteList.get(position).getId());
+            }
+        });
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +112,33 @@ public class MainActivity extends AppCompatActivity {
         ivMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PopupMenu menu = new PopupMenu(MainActivity.this, v);
+                menu.inflate(R.menu.more_menu);
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.item_about_us:
+                                AboutDialog dialog = new AboutDialog(MainActivity.this);
+                                dialog.show();
+                                break;
+
+
+                            case R.id.item_backup:
+
+                                break;
+
+                            case R.id.item_restore:
+
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+
+                menu.show();
 
             }
         });
@@ -115,21 +150,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "خاطره ای یافت نشد", Toast.LENGTH_SHORT).show();
 
 
-
-
     }
+
+
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (mAdapter != null) {
+    public void onLikeClick(int id) {
+        Toast.makeText(this, "Like Button Number " + id + " Clicked!", Toast.LENGTH_SHORT).show();
 
-            mDb = new SqlHelper(MainActivity.this);
-            mNoteList = mDb.getAllNotes();
-            mAdapter.notifyDataSetChanged();
-
-        }
     }
+
 
 }

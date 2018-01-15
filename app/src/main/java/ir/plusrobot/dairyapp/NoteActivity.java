@@ -61,6 +61,9 @@ public class NoteActivity extends AppCompatActivity {
                         Toast.makeText(NoteActivity.this, "خاطره افزوده شد", Toast.LENGTH_SHORT).show();
                         NoteActivity.this.finish();
                     }
+
+
+
                 }
             }
         });

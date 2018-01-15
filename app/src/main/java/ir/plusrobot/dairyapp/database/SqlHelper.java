@@ -156,4 +156,49 @@ public class SqlHelper extends SQLiteOpenHelper {
     }
 
 
+    public int setLike(int id) {
+        mDb = getWritableDatabase();
+        boolean isLiked = getLike(id);
+        ContentValues values = new ContentValues();
+
+        if (isLiked == true) {
+            values.put(SqlContract.TD_COLUMN_FAV, false);
+        } else {
+            values.put(SqlContract.TD_COLUMN_FAV, true);
+        }
+
+        int updatedRecrods = mDb.update(SqlContract.TABLE_DAIRY, values, SqlContract.TD_COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        mDb.close();
+        return updatedRecrods;
+    }
+
+    private boolean getLike(int id) {
+        mDb = getReadableDatabase();
+        Cursor c = mDb.rawQuery("select * from " + SqlContract.TABLE_DAIRY + " where " + SqlContract.TD_COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)});
+        c.moveToFirst();
+        String val = c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV));
+
+        return Boolean.valueOf(val);
+    }
+
+
+/*
+    public boolean likeItem(int id){
+        mDb = getWritableDatabase();
+
+        Cursor c = mDb.query(SqlContract.TABLE_DAIRY,
+                new String[]{SqlContract.TD_COLUMN_FAV},
+                SqlContract.TD_COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)},
+                null,null,null);
+
+
+
+        ContentValues values = new ContentValues();
+        values.put(SqlContract.TD_COLUMN_FAV,);
+        mDb.update(SqlContract.TABLE_DAIRY, )
+    }*/
+
+
 }
