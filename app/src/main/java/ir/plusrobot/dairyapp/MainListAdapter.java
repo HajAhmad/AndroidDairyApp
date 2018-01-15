@@ -54,7 +54,12 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainVi
             @Override
             public void onClick(View v) {
                 if (mOnLikeClick != null) {
-                    mOnLikeClick.onLikeClick(id);
+                  boolean isLiked = mOnLikeClick.onLikeClick(holder.getAdapterPosition());
+                    if (isLiked == true) {
+                        holder.ivFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_red_700_24dp));
+                    } else {
+                        holder.ivFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favorite_border_red_700_24dp));
+                    }
                 }
             }
         });
@@ -99,7 +104,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.MainVi
     }
 
     public interface OnLikeClickListener{
-        void onLikeClick(int id);
+        boolean onLikeClick(int id);
     }
 
     public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener){

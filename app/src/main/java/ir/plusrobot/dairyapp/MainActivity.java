@@ -21,8 +21,7 @@ import java.util.List;
 
 import ir.plusrobot.dairyapp.database.SqlHelper;
 
-public class MainActivity extends AppCompatActivity
-        implements MainListAdapter.OnLikeClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private List<NoteItem> mNoteList;
     private MainListAdapter mAdapter;
@@ -92,11 +91,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        //TODO: Solve Unlike Click Problem
         mAdapter.setOnLikeClickListener(new MainListAdapter.OnLikeClickListener() {
             @Override
-            public void onLikeClick(int position) {
+            public boolean onLikeClick(int position) {
                 SqlHelper db = new SqlHelper(MainActivity.this);
-                db.setLike(mNoteList.get(position).getId());
+                boolean isLiked = db.setLike(mNoteList.get(position).getId());
+                if (isLiked == true) {
+                    mNoteList.get(position).setFav(true);
+                    return true;
+                } else {
+                    mNoteList.get(position).setFav(false);
+                    return false;
+                }
             }
         });
 
@@ -144,22 +151,9 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        if (mNoteList.size() > 0)
-            mAdapter.notifyDataSetChanged();
-        else
-            Toast.makeText(this, "خاطره ای یافت نشد", Toast.LENGTH_SHORT).show();
-
-
     }
 
 
-
-
-    @Override
-    public void onLikeClick(int id) {
-        Toast.makeText(this, "Like Button Number " + id + " Clicked!", Toast.LENGTH_SHORT).show();
-
-    }
 
 
 }

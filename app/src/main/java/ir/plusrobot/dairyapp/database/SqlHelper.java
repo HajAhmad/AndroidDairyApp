@@ -156,20 +156,25 @@ public class SqlHelper extends SQLiteOpenHelper {
     }
 
 
-    public int setLike(int id) {
-        mDb = getWritableDatabase();
+    public boolean setLike(int id) {
         boolean isLiked = getLike(id);
+        boolean changedFav;
+        mDb = getWritableDatabase();
+
         ContentValues values = new ContentValues();
 
         if (isLiked == true) {
             values.put(SqlContract.TD_COLUMN_FAV, false);
+            changedFav = false;
         } else {
             values.put(SqlContract.TD_COLUMN_FAV, true);
+            changedFav = true;
         }
 
         int updatedRecrods = mDb.update(SqlContract.TABLE_DAIRY, values, SqlContract.TD_COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         mDb.close();
-        return updatedRecrods;
+        Log.i("Sql", updatedRecrods + " Like changed");
+        return changedFav;
     }
 
     private boolean getLike(int id) {
@@ -178,7 +183,8 @@ public class SqlHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)});
         c.moveToFirst();
         String val = c.getString(c.getColumnIndex(SqlContract.TD_COLUMN_FAV));
-
+        c.close();
+        mDb.close();
         return Boolean.valueOf(val);
     }
 
